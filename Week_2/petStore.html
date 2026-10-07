@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html Lang="en">
+    <head>
+        <title> Vue.js pet deposits</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" />
+    </head>
+    <body>
+        <!--Place where mounting happenss-->
+        <div id="app">
+            <header>
+                <h1 v-text="sitename"></h1>
+                <button v-on:click="showCheckout">
+                    <!--'cartItemCount' is sued the same way as a data property. -->
+                    {{cartItemCount}} 
+                    <!-- cart icon-->
+                     <span class="fa-solid fa-cart-shopping"></span>Checkout
+                </button>
+            </header>
+            <main>
+                <div v-if="showProduct">
+                <figure>
+                    <img v-bind:src ="product.image">
+                </figure>
+                <h2 v-text="product.title"></h2>
+                <p v-html="product.description"></p>
+                <p> Price: {{product.price}}</p>
+                <p> Available Inventory: {{product.availableInventory}}</p>
+                <button v-on:click="addToCart" v-if="canAddToCart">Add to cart</button>
+                <button disabled="disabled" v-else>Add to cart</button>
+                    <p>This is the product information.</p>
+                </div>
+
+                <div v-else>
+                    <h2>Checkout</h2>
+                    <p>
+                        <strong>First Name:</strong> 
+                        <input v-model.trim="order.firstName"/>
+                    </p>
+                    <p>
+                        <strong>Last Name:</strong> 
+                        <input v-model.trim="order.lastName"/>
+                    </p>
+                    <p>
+                        <strong>Address:</strong>
+                        <input v-model.trim="order.address"/>
+                    </p>
+                    <p>
+                        <strong>City:</strong>
+                        <input v-model.trim="order.city"/>
+                    </p>
+                    <p>
+                        <strong>State:</strong>
+                        <select v-model="order.state">
+                        <option disabled value="">State</option>
+                        <option v-bind:value="states.AL">AL</option>
+                        <option v-bind:value="states.AR">AR</option>
+                        <option v-bind:value="states.CA">CA</option>
+                        <option v-bind:value="states.NV">NV</option>
+                        </select>
+                    </p>
+                    <p>
+                        <strong>Zip:</strong>
+                        <input v-model.trim="order.zip" type="number"/>
+                    </p>
+                    <p><input type="checkbox" id="gift" value="true" v-model="order.gift" v-bind:true-value="order.sendGift" v-bind:false-value="order.dontSendGift">
+                    <label for="gift">Ship as a gift</label></p>
+
+                    <p><input type="radio" id="home" value="Home" v-model="order.method">
+                    <label for="home">Home</label>
+                    <input type="radio" id="work" value="Business" v-model="order.method">
+                    <label for="Business">Business</label></p>
+                    <button v-on:click="submitForm">Place Order</button>
+
+
+
+
+                    <!-- Display Order Information -->
+
+                    <h2>Order Information</h2>
+                    <p>First Name: {{order.firstName}}</p>
+                    <p>Last Name: {{order.lastName}}</p>
+                    <p>Address: {{order.address}}</p>
+                    <p>City: {{order.city}}</p>
+                    <p>State: {{order.state}}</p>
+                    <p>Zip: {{order.zip}}</p>
+                    <p>Ship as a gift: {{order.gift}}</p>
+                    <p>Shipping Method: {{order.method}}</p>
+                </div>
+            </main>
+        </div>
+        <script type = "text/Javascript">
+            var webstore = new Vue({
+                el: '#app',
+                data:{//the 'data' option
+                    // the key 'sitename' matches the value of 'v-text' earlier
+                    sitename: 'Vue.js Pet Depot',
+                    showProduct: true,
+                    product:{
+                        id:1001,
+                        title:"Cat Food, 25lb bag",
+                        description:"A 25 pound bag of <em>irresistible</em>,"+"organic goodness for your cat",
+                        price: 2000,
+                        image: "images/catfood.png",
+                        availableInventory: 5,
+                        
+                    },
+                    order: {
+                            firstName: "",
+                            lastName: "",
+                            address: "",
+                            city: "",
+                            state: "",
+                            zip: "",
+                            gift: 'Do not send as a gift',
+                            method: 'Home',
+                            sendGift:'Send as a gift',
+                            dontSendGift:'Do not send as a gift'
+                        },
+                    states: {
+                        AL: 'Alabama',
+                        AR: 'Arkansas',
+                        CA: 'California',
+                        NV: 'Nevada'
+                    },
+                    cart: []
+                },
+                methods:{
+                    addToCart: function(){
+                        this.cart.push(this.product.id)
+                        this.product.availableInventory = this.product.availableInventory - 1;
+                    },
+                    showCheckout(){
+                        this.showProduct = this.showProduct ? false : true;
+                    },
+                    submitForm(){ alert('Order submitted!');}
+                },
+                computed:{//the Computed Property bject
+                    cartItemCount: function(){
+                        return this.cart.length || "";
+                    },
+                    canAddToCart: function(){
+                        return this.product.availableInventory > 0;
+                    }
+                }
+
+            })
+        </script>
+    </body>
+</html>
